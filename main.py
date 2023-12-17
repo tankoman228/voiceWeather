@@ -1,7 +1,19 @@
+import datetime
+
 import audio_interface
 import commands
 
 import re
+
+days_of_week = {
+    'monday': 1,
+    'tuesday': 2,
+    'wednesday': 3,
+    'thursday': 4,
+    'friday': 5,
+    'saturday': 6,
+    'sunday': 7
+}
 
 if __name__ == "__main__":
 
@@ -35,6 +47,16 @@ if __name__ == "__main__":
             if re.search(r'tomorrow', voice_input):
                 days.append(1)
                 weather_query_like += 1
+            words = voice_input.split(' ')
+            min_days = 7
+            for word in words:
+                if word in days:
+                    day_of_week = days[word.lower()]
+                    days_to_next_day_of_week = (day_of_week - datetime.date.today().weekday() - 1)
+                    days.append(days_to_next_day_of_week)
+                    print(days_to_next_day_of_week)
+
+            print(min_days)
 
             if len(days) == 0:
                 days = [0]
