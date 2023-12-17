@@ -1,38 +1,62 @@
 import audio_interface
-import weather_getter
-import re
+import commands
 
+import re
 
 if __name__ == "__main__":
 
-    #print(weather_getter.get_weather('London'))
-
-    input()
-
     while True:
 
+        weather_query_like = 0
+
         voice_input = audio_interface.record_and_recognize_audio(4)
+        #voice_input = input('cmd: ')
         print(voice_input)
 
         try:
             city = re.search(r'in (\w)+', voice_input)[0].split(' ')[1].title()
+            weather_query_like += 1
         except:
-            city = 'Novosibirsk'
+            city = commands.get_city()
 
-        days = []
         try:
-            if re.search(r'tomorrow', voice_input):
-                days.append(1)
+
+            split_cmd = voice_input.split(' ')
+            command = voice_input.replace(' ' + split_cmd[len(split_cmd) - 1], '')
+
+            if command in commands.commands:
+                commands.commands[command](split_cmd[len(split_cmd) - 1])
+                continue
+
+            days = []
             if re.search(r'today', voice_input):
                 days.append(0)
-        except:
-            pass
+                weather_query_like += 1
+            if re.search(r'tomorrow', voice_input):
+                days.append(1)
+                weather_query_like += 1
 
-        if len(days) == 0:
-            days = [0]
+            if len(days) == 0:
+                days = [0]
 
-        try:
-            print(weather_getter.get_weather(city, days))
+            if re.search(r'weather', voice_input):
+                weather_query_like += 1
+            elif re.search(r'forecast', voice_input):
+                weather_query_like += 1
+            elif re.search(r'will be', voice_input):
+                weather_query_like += 1
+            elif re.search(r'is', voice_input):
+                weather_query_like += 1
+
+            if weather_query_like > 0:
+
+                weather = commands.get_weather(city, days)
+                text = ''
+                for day in weather:
+                    c = day[1]
+                    text += f'at {day[0].split(".")[0]} in {city} will be {day[2]}, temperature about {int(c["temp"])} '
+                # print(text)
+                audio_interface.play_voice_assistant_speech(text)
+
         except Exception as e:
             print('error', e)
-

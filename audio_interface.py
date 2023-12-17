@@ -10,6 +10,7 @@ def setup_assistant_voice():
 
 # Text to speech
 def play_voice_assistant_speech(text_to_speech: str):
+    print('bot: ', text_to_speech)
     ttsEngine.say(text_to_speech)
     ttsEngine.runAndWait()
 
