@@ -17,6 +17,8 @@ def play_voice_assistant_speech(text_to_speech: str):
 
 # Speech to text
 def record_and_recognize_audio(await_time: int):
+    return input()
+
     with microphone:
         recognized_data = ""
 
